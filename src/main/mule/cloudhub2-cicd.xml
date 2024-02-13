@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+	<http:listener-config name="HTTP_Listener_config" doc:name="HTTP Listener config" doc:id="b8eb110a-349d-4092-9d20-4957a32aad0a" >
+		<http:listener-connection host="0.0.0.0" port="8081" />
+	</http:listener-config>
+	<flow name="cloudhub2-cicdFlow" doc:id="9f463966-ae25-44ed-a045-b781d1014710" >
+		<http:listener doc:name="Listener" doc:id="f09b0751-b703-4a70-be0e-a69ecc74ae26" config-ref="HTTP_Listener_config" path="/test"/>
+		<set-variable value="#[attributes.queryParams.num1]" doc:name="Set Variable" doc:id="a1cf4eb3-797e-449c-bc4c-5325e392d7be" variableName="num1"/>
+		<set-variable value="#[attributes.queryParams.num2]" doc:name="Set Variable" doc:id="697f2362-47b5-4792-99a1-ea5dcda197c3" variableName="num2"/>
+		<ee:transform doc:name="Transform Message" doc:id="557b13dc-bce3-4bb6-9305-3f1c5e367f24" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+{
+	"add": vars.num1 as Number + vars.num2 as Number,
+	"divide": vars.num1 as Number / vars.num2 as Number
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+	</flow>
+</mule>
